@@ -1,0 +1,8 @@
+data/**
+results/**
+resources/**
+logs/**
+.snakemake
+.snakemake/**
+.test/results**
+.test/resources**
