@@ -6,10 +6,6 @@ on:
   pull_request:
     branches: [main]
 
-# TODO: optionally enable cache
-# env:
-#   SNAKEMAKE_OUTPUT_CACHE: snakemake_cache
-
 jobs:
   Formatting:
     runs-on: ubuntu-latest
@@ -38,13 +34,12 @@ jobs:
         with:
           lfs: true
           submodules: recursive
-      # TODO: optionally enable cache
-      # - name: Snakemake cache
-      #   id: cache-sm
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: ${{ env.SNAKEMAKE_OUTPUT_CACHE }}
-      #     key: ${{ runner.os }}-sm
+      - name: Cache test data
+        id: cache-sm
+        uses: actions/cache@v3
+        with:
+          path: .test/ngs-test-data
+          key: ${{ runner.os }}-sm
       - name: Setup Singularity
         uses: eWaterCycle/setup-singularity@v7
         with:
@@ -60,17 +55,14 @@ jobs:
           channel-priority: strict
           environment-file: environment.yaml
       - name: Generate test data
-        run: cd .test/ngs-test-data && snakemake all --use-conda --cores 2
+        run: cd .test/ngs-test-data && snakemake wgs --use-conda --cores 2
       - name: Run workflow
         run: |
-          mkdir -p ${{ env.SNAKEMAKE_OUTPUT_CACHE }}
-          export SNAKEMAKE_OUTPUT_CACHE=${{ env.SNAKEMAKE_OUTPUT_CACHE }}
           snakemake all \
           --use-conda \
           --use-singularity \
           --directory .test \
           --cores 2 \
-          # --cache \ # TODO: optionally enable cache
           --show-failed-logs \
           --conda-cleanup-pkgs cache \
           --all-temp
