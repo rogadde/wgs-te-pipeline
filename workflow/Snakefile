@@ -8,3 +8,17 @@ from snakemake.utils import min_version
 ##### set minimum snakemake version #####
 min_version("7.16.0")
 
+
+configfile: "config/config.yml"
+
+
+include: "rules/ref.smk"
+
+
+rule all:
+    input:
+        expand(
+            rules.gen_ref.output,
+            outdir=config["outdir"],
+            ref=config["genome"]["build"],
+        ),
