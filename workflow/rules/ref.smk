@@ -1,10 +1,10 @@
 rule install_bwakit:
     output:
-        directory("resources/bwa.kit"),
+        "{outdir}/resources/bwa.kit",
     conda:
         "../envs/ref.yml"
     log:
-        "resources/install_bwakit.log",
+        "{outdir}/resources/install_bwakit.log",
     shell:
         """
         mkdir -p resources && cd resources
@@ -46,16 +46,14 @@ rule gen_ref:
         touch {log} && exec 2>{log}
 
         # download reference
-        wget -q --no-config ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/seqs_for_alignment_pipelines.ucsc_ids/GCA_000001405.15_GRCh38_full_analysis_set.fna.gz
-        gunzip GCA_000001405.15_GRCh38_full_analysis_set.fna.gz
-        cat GCA_000001405.15_GRCh38_full_analysis_set.fna \
-            {input}/resource-GRCh38/hs38DH-extra.fa \
-            > hs38DH.fa
-        rm GCA_000001405.15_GRCh38_full_analysis_set.fna
+        url38="ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/seqs_for_alignment_pipelines.ucsc_ids/GCA_000001405.15_GRCh38_full_analysis_set.fna.gz"
+
+        wget -O- $url38 | gzip -dc > hs38DH.fa
+        cat {input}/resource-GRCh38/hs38DH-extra.fa >> hs38DH.fa
 
         # filter for the region if specified
         if [ "{params.region}" != "all" ]; then
-            samtools faidx {wildcards.ref}.fa $region > {output[0]}
+            samtools faidx {wildcards.ref}.fa {params.region} > {output[0]}
         else
             mv {wildcards.ref}.fa {output[0]}
         fi
