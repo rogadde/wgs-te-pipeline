@@ -7,7 +7,7 @@ rule install_bwakit:
     output:
         directory("resources/bwa.kit"),
     conda:
-        "../envs/ref.yml"
+        "../envs/ref.yaml"
     log:
         "resources/install_bwakit.log",
     shell:
@@ -43,7 +43,7 @@ rule gen_ref:
     log:
         "resources/gen_ref.log",
     conda:
-        "../envs/ref.yml"
+        "../envs/ref.yaml"
     params:
         region=" ".join(config["region"])
         if isinstance(config["region"], list)
