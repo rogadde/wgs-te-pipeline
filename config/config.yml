@@ -1,6 +1,3 @@
-samples: .test/config/samplesheet.tsv
-outdir: .test
-
-genome:
-  build: hs38DH
-  region: chr21
+samples: config/samplesheet.tsv
+outdir: results
+region: chr21
