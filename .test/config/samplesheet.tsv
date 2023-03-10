@@ -1,3 +1,2 @@
 sample_id	r1	r2
-a	.ngs-test-data/wgs/a.chr21.1.fq.gz	.ngs-test-data/wgs/a.chr21.2.fq.gz
-b	.ngs-test-data/wgs/b.chr21.1.fq.gz	.ngs-test-data/wgs/b.chr21.2.fq.gz
+a	ngs-test-data/wgs/a.chr21.1.fq.gz	ngs-test-data/wgs/a.chr21.2.fq.gz
