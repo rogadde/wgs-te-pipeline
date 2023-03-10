@@ -4,6 +4,7 @@
 # in particular regarding the standardized folder structure mentioned there.
 
 from snakemake.utils import min_version
+import pandas as pd
 
 ##### set minimum snakemake version #####
 min_version("7.16.0")
@@ -12,13 +13,17 @@ min_version("7.16.0")
 configfile: "config/config.yml"
 
 
+samples = pd.read_csv(config["samples"], sep="\t").set_index("sample_id", drop=False)
+
+
 include: "rules/ref.smk"
+include: "rules/align.smk"
 
 
 rule all:
     input:
         expand(
-            rules.gen_ref.output,
+            rules.bwa_mem.output,
             outdir=config["outdir"],
-            ref=config["genome"]["build"],
+            sample=samples["sample_id"],
         ),
