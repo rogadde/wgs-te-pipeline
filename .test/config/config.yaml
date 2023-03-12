@@ -1,3 +1,6 @@
 samples: config/samplesheet.tsv
 outdir: results
 region: chr21
+reptype:
+  - L1
+  - Alu

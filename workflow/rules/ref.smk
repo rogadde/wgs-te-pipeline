@@ -1,13 +1,8 @@
-from snakemake.remote import FTP
-
-FTP = FTP.RemoteProvider()
-
-
 rule install_bwakit:
     output:
         directory("resources/bwa.kit"),
     conda:
-        "../envs/ref.yml"
+        "../envs/ref.yaml"
     log:
         "resources/install_bwakit.log",
     shell:
@@ -35,15 +30,12 @@ rule gen_ref:
             static=True,
         ),
     output:
-        multiext(
-            f"resources/hs38DH{region_name}",
-            ".fa",
-            ".fa.fai",
-        ),
+        fa=f"resources/hs38DH{region_name}.fa",
+        fai=f"resources/hs38DH{region_name}.fa.fai",
     log:
         "resources/gen_ref.log",
     conda:
-        "../envs/ref.yml"
+        "../envs/ref.yaml"
     params:
         region=" ".join(config["region"])
         if isinstance(config["region"], list)
@@ -57,12 +49,12 @@ rule gen_ref:
 
         # filter for the region if specified
         if [ "{params.region}" != "all" ]; then
-            samtools faidx {input} {params.region} > {output[0]}
-            rm -f {input}
+            samtools faidx {input} {params.region} > {output.fa}
+            sed -i 's/chr//g' {output.fa} # remove chrname in test, xtea doesn't like it
         else
-            mv {input} {output[0]}
+            mv {input} {output.fa}
         fi
 
         # index
-        samtools faidx {output[0]}
+        samtools faidx {output.fa}
         """
