@@ -37,9 +37,9 @@ jobs:
         id: cache-sm
         uses: actions/cache@v3
         with:
-          path:
-            - .test/ngs-test-data
-            - .test/resources
+          path: |
+            .test/ngs-test-data
+            .test/resources
           key: ${{ runner.os }}-sm
       - name: Setup Singularity
         uses: eWaterCycle/setup-singularity@v7
