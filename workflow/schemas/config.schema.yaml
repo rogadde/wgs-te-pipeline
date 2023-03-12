@@ -1,0 +1,33 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+
+description: snakemake configuration file
+
+type: object
+
+properties:
+  outdir:
+    type: string
+    description: path to the output directory (does not need to exist)
+  samples:
+    type: string
+    description: path to the runsheet
+  region:
+    type: string
+    description: path to the patientsheet
+  retype:
+    type:
+      - array
+      - string
+    description: repeat type(s) to call
+    enum:
+      - L1
+      - Alu
+      - SVA
+      - HERV
+      - Mitochondrial
+
+required:
+  - samples
+  - outdir
+  - region
+  - reptype

@@ -1,0 +1,16 @@
+channels:
+  - conda-forge
+  - bioconda
+  - nodefaults
+dependencies:
+  - python>=3.6
+  - pip
+  - bwa
+  - wget
+  - samtools=1.9
+  - pysam
+  - sortedcontainers
+  - ipykernel
+  - xtea==0.1.9
+  - pip:
+      - deep-forest>=0.1.7
