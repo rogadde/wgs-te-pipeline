@@ -40,7 +40,12 @@ rule prepare_xtea:
 
 rule run_xtea:
     input:
-        "{outdir}/xtea/{sample}/{reptype1}/run_xTEA_pipeline.sh",
+        script="{outdir}/xtea/{sample}/{reptype1}/run_xTEA_pipeline.sh",
+        rep_lib=rules.get_xtea_annotation.output.rep_lib,
+        gencode=rules.get_xtea_annotation.output.gencode,
+        fa=rules.gen_ref.output.fa,
+        bam=rules.sambamba_sort.output,
+        bai=rules.sambamba_index.output,
     output:
         "{outdir}/xtea/{sample}/{reptype1}/{sample}.aln.sorted_{reptype2}.vcf",
     conda:
@@ -52,10 +57,10 @@ rule run_xtea:
         touch {log} && exec > {log} 2>&1
 
         # fix the run_xTEA_pipeline.sh script
-        sed -i 's/--bamsnap //g' {input}
+        sed -i 's/--bamsnap //g' {input.script}
 
         # run xtea
         # cd {wildcards.outdir}/xtea
         # bash $(pwd)/{wildcards.sample}/{wildcards.reptype1}/run_xTEA_pipeline.sh
-        bash {input}
+        bash {input.script}
         """
