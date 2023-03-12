@@ -24,7 +24,7 @@ rule bwa_mem:
         fa=rules.gen_ref.output[0],
         reads=lambda wc: samples.loc[wc.sample, ["r1", "r2"]],
     output:
-        "{outdir}/results/align/{sample}.aln.bam",
+        "{outdir}/align/{sample}.aln.bam",
     threads: 4
     shell:
         """
@@ -40,3 +40,31 @@ rule bwa_mem:
             $idxbase \
             {input.reads} | bash
         """
+
+
+rule sambamba_sort:
+    input:
+        rules.bwa_mem.output,
+    output:
+        "{outdir}/align/{sample}.aln.sorted.bam",
+    log:
+        "{outdir}/align/{sample}_sort.log",
+    params:
+        extra="",  # this must be preset
+    threads: 8
+    wrapper:
+        "v1.23.5/bio/sambamba/sort"
+
+
+rule sambamba_index:
+    input:
+        rules.sambamba_sort.output,
+    output:
+        "{outdir}/align/{sample}.aln.sorted.bam.bai",
+    log:
+        "{outdir}/align/{sample}_index.log",
+    params:
+        extra="",  # this must be preset
+    threads: 8
+    wrapper:
+        "v1.23.5/bio/sambamba/index"
