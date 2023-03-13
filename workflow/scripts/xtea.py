@@ -50,6 +50,7 @@ with tempfile.NamedTemporaryFile() as bam_list:
             "-p {workdir} "
             "-x null "
             "-f 5907 "
+            "--blacklist {snakemake.input.blacklist} "
             "-y {reptype} "
             "-n {snakemake.threads} "
             "--xtea $CONDA_PREFIX/lib "
