@@ -2,6 +2,7 @@ rule get_xtea_annotation:
     output:
         gencode="resources/gencode.v42.annotation.gff3",
         rep_lib=directory("resources/rep_lib_annotation"),
+        blacklist="resources/sv_blacklist.bed",
     log:
         "resources/get_xtea_annotation.log",
     conda:
@@ -15,6 +16,7 @@ rule get_xtea_annotation:
         wget https://github.com/parklab/xTea/raw/master/rep_lib_annotation.tar.gz
         tar -xvf rep_lib_annotation.tar.gz -C {output.rep_lib}
         rm -f rep_lib_annotation.tar.gz
+        curl https://cf.10xgenomics.com/supp/genome/GRCh38/sv_blacklist.bed > {output.blacklist}
         """
 
 
@@ -23,6 +25,7 @@ rule prepare_xtea:
     input:
         rep_lib=rules.get_xtea_annotation.output.rep_lib,
         gencode=rules.get_xtea_annotation.output.gencode,
+        blacklist=rules.get_xtea_annotation.output.blacklist,
         fa=rules.gen_ref.output.fa,
         bam=rules.sambamba_sort.output,
         bai=rules.sambamba_index.output,
@@ -43,6 +46,7 @@ rule run_xtea:
         script="{outdir}/xtea/{sample}/{reptype1}/run_xTEA_pipeline.sh",
         rep_lib=rules.get_xtea_annotation.output.rep_lib,
         gencode=rules.get_xtea_annotation.output.gencode,
+        blacklist=rules.get_xtea_annotation.output.blacklist,
         fa=rules.gen_ref.output.fa,
         bam=rules.sambamba_sort.output,
         bai=rules.sambamba_index.output,
