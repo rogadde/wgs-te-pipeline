@@ -24,11 +24,14 @@ wildcard_constraints:
     sample="\w+",
 
 
-samples = pd.read_csv(config["samples"], sep="\t").set_index("sample_id", drop=False)
+samples = pd.read_csv(config["samples"], sep="\t").set_index(
+    ["sample_id", "platform"], drop=False
+)
 
 
 include: "rules/ref.smk"
 include: "rules/align.smk"
+include: "rules/longranger.smk"
 include: "rules/xtea.smk"
 
 

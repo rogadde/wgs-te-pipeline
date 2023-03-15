@@ -1,0 +1,28 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+
+description: snakemake configuration file
+
+type: object
+
+properties:
+  sample_id:
+    type: string
+    description: sample ID
+  platform:
+    type: string
+    description: sequencing platform
+    enum:
+      - 10x
+      - illumina
+  r1:
+    type: string
+    description: path to R1 fastq
+  r2:
+    type: string
+    description: path to R2 fastq
+
+required:
+  - sample_id
+  - platform
+  - r1
+  - r2

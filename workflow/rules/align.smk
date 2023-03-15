@@ -22,16 +22,17 @@ rule bwa_mem:
         bwakit=rules.install_bwakit.output,
         idx=rules.bwa_index.output.idx,
         fa=rules.gen_ref.output[0],
-        reads=lambda wc: samples.loc[wc.sample, ["r1", "r2"]],
+        reads=lambda wc: samples.loc[
+            (wc.sample, "illumina"), ["r1", "r2"]
+        ].values.flatten(),
     output:
-        "{outdir}/align/{sample}.aln.bam",
-    threads: 4
+        "{outdir}/align/illumina/{sample}.aln.bam",
+    threads: 32
     shell:
         """
         prefix="$(dirname {output})/$(basename {output} .aln.bam)"
         idxbase="$(dirname {input.idx[0]})/$(basename {input.idx[0]} .amb)"
 
-        # -s sort option doesn't work
         {input.bwakit}/run-bwamem \
             -R "@RG\\tID:{wildcards.sample}\\tSM:{wildcards.sample}\\tPL:ILLUMINA" \
             -d \
@@ -44,11 +45,11 @@ rule bwa_mem:
 
 rule sambamba_sort:
     input:
-        rules.bwa_mem.output,
+        "{outdir}/align/{platform}/{sample}.aln.bam",
     output:
-        "{outdir}/align/{sample}.aln.sorted.bam",
+        "{outdir}/align/{platform}/{sample}.aln.sorted.bam",
     log:
-        "{outdir}/align/{sample}_sort.log",
+        "{outdir}/align/{platform}/{sample}_sort.log",
     params:
         extra="",  # this must be preset
     threads: 8
@@ -60,9 +61,9 @@ rule sambamba_index:
     input:
         rules.sambamba_sort.output,
     output:
-        "{outdir}/align/{sample}.aln.sorted.bam.bai",
+        "{outdir}/align/{platform}/{sample}.aln.sorted.bam.bai",
     log:
-        "{outdir}/align/{sample}_index.log",
+        "{outdir}/align/{platform}/{sample}_index.log",
     params:
         extra="",  # this must be preset
     threads: 8
