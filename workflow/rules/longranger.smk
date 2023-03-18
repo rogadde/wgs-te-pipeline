@@ -30,7 +30,7 @@ rule longranger_align:
         fastqs=lambda wc: samples.loc[(wc.sample, "10x"), ["r1", "r2"]].values.flatten(),
         ref=rules.longranger_mkref.output,
     output:
-        "{outdir}/align/10x/{sample}.aln.bam",
+        "{outdir}/align/10x/{sample}/outs/possorted_bam.bam",
     threads: 32
     script:
         "../scripts/longranger_align.py"

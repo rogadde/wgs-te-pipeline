@@ -3,6 +3,7 @@
 __author__ = "Michael Cuoco"
 
 from pathlib import Path
+import os
 from snakemake.shell import shell
 
 # get path to fastq dir
@@ -22,3 +23,8 @@ shell(
     "--localcores={snakemake.threads} "
     "--disable-ui "
 )
+
+outdir = str(Path(snakemake.output.bam).parent.parent)
+os.makedirs(outdir, exist_ok=True)
+
+shell("mv {snakemake.wildcards.sample} {outdir}")
