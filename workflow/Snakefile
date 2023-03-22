@@ -23,8 +23,8 @@ wildcard_constraints:
     sample="\w+",
 
 
-samples = pd.read_csv(config["samples"], sep="\t").set_index(
-    ["individual_id", "sample_id", "platform"], drop=False
+samples = pd.read_csv(config["samples"], sep="\t", dtype=str).set_index(
+    ["individual_id", "platform", "sample_id", "lane_id"], drop=False
 )
 samples.sort_index(inplace=True)
 

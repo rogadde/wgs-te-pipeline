@@ -28,7 +28,7 @@ rule longranger_align:
     input:
         longranger=rules.install_longranger.output,
         fastqs=lambda wc: samples.loc[
-            (wc.individual, wc.sample, "10x"), ["r1", "r2"]
+            (wc.individual, "10x", wc.sample), ["r1", "r2"]
         ].values.flatten(),
         ref=rules.longranger_mkref.output,
     output:

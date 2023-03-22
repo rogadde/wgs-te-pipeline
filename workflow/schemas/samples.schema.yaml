@@ -10,7 +10,10 @@ properties:
     description: individual ID
   sample_id:
     type: string
-    description: sample ID, fastqs with same sample ID will be mapped together
+    description: sample ID, bams with same sample ID will be merged together
+  lane_id:
+    type: string
+    description: lane ID
   platform:
     type: string
     description: sequencing platform
@@ -27,6 +30,7 @@ properties:
 required:
   - individual_id
   - sample_id
+  - lane_id
   - platform
   - r1
   - r2
