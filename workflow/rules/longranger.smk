@@ -27,10 +27,51 @@ rule longranger_mkref:
 rule longranger_align:
     input:
         longranger=rules.install_longranger.output,
-        fastqs=lambda wc: samples.loc[(wc.sample, "10x"), ["r1", "r2"]].values.flatten(),
+        fastqs=lambda wc: samples.loc[
+            (wc.individual, wc.sample, "10x"), ["r1", "r2"]
+        ].values.flatten(),
         ref=rules.longranger_mkref.output,
     output:
-        "{outdir}/align/10x/{sample}/outs/possorted_bam.bam",
+        bam="{outdir}/align/10x/{individual}/{sample}/outs/possorted_bam.bam",
+        bai="{outdir}/align/10x/{individual}/{sample}/outs/possorted_bam.bam.bai",
     threads: 32
     script:
         "../scripts/longranger_align.py"
+
+
+rule rule_install_barcodemate:
+    output:
+        directory("resources/BarcodeMate"),
+    shell:
+        """
+        cd resources
+        git clone https://github.com/simoncchu/BarcodeMate
+        """
+
+
+rule barcodemate:
+    input:
+        barcodemate=rules.rule_install_barcodemate.output,
+        bam=rules.longranger_align.output.bam,
+        bai=rules.longranger_align.output.bai,
+    output:
+        bam=rules.longranger_align.output.bam.replace("bam", "barcodemate.bam"),
+    conda:
+        "../envs/barcodemate.yaml"
+    log:
+        rules.longranger_align.output.bam.replace("bam", "barcodemate.log"),
+    threads: 32
+    shell:
+        """
+        # make tmpdir in same directory as output to avoid cross-device link error
+        tmpdir=$(mktemp -d -p $(dirname {output.bam}))
+
+        python resources/BarcodeMate/x_toolbox.py -C \
+            -b {input.bam} \
+            -o {output.bam} \
+            -p $tmpdir \
+            -n {threads} 2> {log}
+
+        # remove tmpdir
+        rm -rf $tmpdir
+        """

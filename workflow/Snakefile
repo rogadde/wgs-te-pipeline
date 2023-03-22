@@ -9,7 +9,6 @@ from snakemake.remote import FTP, HTTP
 FTP = FTP.RemoteProvider()
 HTTP = HTTP.RemoteProvider()
 
-from glob import glob
 import pandas as pd
 
 ##### set minimum snakemake version #####
@@ -25,13 +24,14 @@ wildcard_constraints:
 
 
 samples = pd.read_csv(config["samples"], sep="\t").set_index(
-    ["sample_id", "platform"], drop=False
+    ["individual_id", "sample_id", "platform"], drop=False
 )
+samples.sort_index(inplace=True)
 
 
 include: "rules/ref.smk"
-include: "rules/align.smk"
 include: "rules/longranger.smk"
+include: "rules/align.smk"
 include: "rules/xtea.smk"
 
 
@@ -47,12 +47,16 @@ rule all:
     input:
         expand(
             expand(
-                rules.run_xtea.output,
-                zip,
-                reptype1=config["reptype"],
-                reptype2=reptype2,
+                expand(
+                    rules.run_xtea.output,
+                    zip,
+                    reptype1=config["reptype"],
+                    reptype2=reptype2,
+                    allow_missing=True,
+                ),
+                individual=set(samples["individual_id"]),
+                platform="illumina_10x",
                 allow_missing=True,
             ),
-            sample=samples["sample_id"],
             outdir=config["outdir"],
         ),

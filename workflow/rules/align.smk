@@ -23,10 +23,10 @@ rule bwa_mem:
         idx=rules.bwa_index.output.idx,
         fa=rules.gen_ref.output[0],
         reads=lambda wc: samples.loc[
-            (wc.sample, "illumina"), ["r1", "r2"]
+            (wc.individual, wc.sample, "illumina"), ["r1", "r2"]
         ].values.flatten(),
     output:
-        "{outdir}/align/illumina/{sample}.aln.bam",
+        "{outdir}/align/illumina/{individual}/{sample}.aln.bam",
     threads: 32
     shell:
         """
@@ -34,7 +34,7 @@ rule bwa_mem:
         idxbase="$(dirname {input.idx[0]})/$(basename {input.idx[0]} .amb)"
 
         {input.bwakit}/run-bwamem \
-            -R "@RG\\tID:{wildcards.sample}\\tSM:{wildcards.sample}\\tPL:ILLUMINA" \
+            -R "@RG\\tID:{wildcards.individual}\\tSM:{wildcards.sample}\\tPL:ILLUMINA" \
             -d \
             -t {threads} \
             -o $prefix \
@@ -45,13 +45,13 @@ rule bwa_mem:
 
 rule sambamba_sort:
     input:
-        "{outdir}/align/{platform}/{sample}.aln.bam",
+        rules.bwa_mem.output,
     output:
-        "{outdir}/align/{platform}/{sample}.aln.sorted.bam",
+        "{outdir}/align/illumina/{individual}/{sample}.aln.sorted.bam",
     log:
-        "{outdir}/align/{platform}/{sample}_sort.log",
+        "{outdir}/align/illumina/{individual}/{sample}_sort.log",
     params:
-        extra="",  # this must be preset
+        extra="",  # this must be present for the wrapper to work
     threads: 8
     wrapper:
         "v1.23.5/bio/sambamba/sort"
@@ -61,11 +61,11 @@ rule sambamba_index:
     input:
         rules.sambamba_sort.output,
     output:
-        "{outdir}/align/{platform}/{sample}.aln.sorted.bam.bai",
+        rules.sambamba_sort.output[0] + ".bai",
     log:
-        "{outdir}/align/{platform}/{sample}_index.log",
+        rules.sambamba_sort.output[0].replace("sort", "index"),
     params:
-        extra="",  # this must be preset
+        extra="",  # this must be present for the wrapper to work
     threads: 8
     wrapper:
         "v1.23.5/bio/sambamba/index"

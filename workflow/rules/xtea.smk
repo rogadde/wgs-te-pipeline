@@ -20,21 +20,65 @@ rule get_xtea_annotation:
         """
 
 
-# TODO: add blacklist file
+def get_bam(wildcards):
+    i = dict()
+    if "illumina" in wildcards.platform:
+        my_samples = set(
+            samples.loc[
+                (samples["individual_id"] == wildcards.individual)
+                & (samples["platform"] == "illumina"),
+                "sample_id",
+            ]
+        )
+        d = {
+            "illumina_bam": expand(
+                rules.sambamba_sort.output, sample=my_samples, allow_missing=True
+            ),
+            "illumina_bai": expand(
+                rules.sambamba_index.output, sample=my_samples, allow_missing=True
+            ),
+        }
+        i.update(d.copy())
+    if "10x" in wildcards.platform:
+        my_samples = set(
+            samples.loc[
+                (samples["individual_id"] == wildcards.individual)
+                & (samples["platform"] == "10x"),
+                "sample_id",
+            ]
+        )
+        d = {
+            "10x_bam": expand(
+                rules.longranger_align.output.bam, sample=my_samples, allow_missing=True
+            ),
+            "10x_bx_bam": expand(
+                rules.barcodemate.output.bam, sample=my_samples, allow_missing=True
+            ),
+        }
+        i.update(d.copy())
+
+    if not i:
+        raise ValueError(
+            "No bam files found for individual {wildcards.individual} and platform {wildcards.platform}"
+        )
+
+    return i
+
+
 rule prepare_xtea:
     input:
+        unpack(get_bam),
         rep_lib=rules.get_xtea_annotation.output.rep_lib,
         gencode=rules.get_xtea_annotation.output.gencode,
         blacklist=rules.get_xtea_annotation.output.blacklist,
         fa=rules.gen_ref.output.fa,
-        bam=rules.sambamba_sort.output,
-        bai=rules.sambamba_index.output,
     output:
-        expand(
-            "{outdir}/xtea/{sample}/{reptype}/run_xTEA_pipeline.sh",
+        script=expand(
+            "{outdir}/xtea/{platform}/{individual}/{reptype}/run_xTEA_pipeline.sh",
             reptype=config["reptype"],
             allow_missing=True,
         ),
+    threads: 8
     conda:
         "../envs/xtea.yaml"
     script:
@@ -43,19 +87,19 @@ rule prepare_xtea:
 
 rule run_xtea:
     input:
-        script="{outdir}/xtea/{sample}/{reptype1}/run_xTEA_pipeline.sh",
+        unpack(get_bam),
+        script="{outdir}/xtea/{platform}/{individual}/{reptype1}/run_xTEA_pipeline.sh",
         rep_lib=rules.get_xtea_annotation.output.rep_lib,
         gencode=rules.get_xtea_annotation.output.gencode,
         blacklist=rules.get_xtea_annotation.output.blacklist,
         fa=rules.gen_ref.output.fa,
-        bam=rules.sambamba_sort.output,
-        bai=rules.sambamba_index.output,
     output:
-        "{outdir}/xtea/{sample}/{reptype1}/{sample}.aln.sorted_{reptype2}.vcf",
+        "{outdir}/xtea/{platform}/{individual}/{reptype1}/{individual}.aln.sorted_{reptype2}.vcf",
+    threads: 8
     conda:
         "../envs/xtea.yaml"
     log:
-        "{outdir}/xtea/{sample}/{reptype1}/run_xtea_{reptype2}.log",
+        "{outdir}/xtea/{platform}/{individual}/{reptype1}/run_xtea_{reptype2}.log",
     shell:
         """
         touch {log} && exec > {log} 2>&1
@@ -64,7 +108,5 @@ rule run_xtea:
         sed -i 's/--bamsnap //g' {input.script}
 
         # run xtea
-        # cd {wildcards.outdir}/xtea
-        # bash $(pwd)/{wildcards.sample}/{wildcards.reptype1}/run_xTEA_pipeline.sh
         bash {input.script}
         """

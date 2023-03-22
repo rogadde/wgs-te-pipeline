@@ -5,9 +5,12 @@ description: snakemake configuration file
 type: object
 
 properties:
+  individual_id:
+    type: string
+    description: individual ID
   sample_id:
     type: string
-    description: sample ID
+    description: sample ID, fastqs with same sample ID will be mapped together
   platform:
     type: string
     description: sequencing platform
@@ -22,6 +25,7 @@ properties:
     description: path to R2 fastq
 
 required:
+  - individual_id
   - sample_id
   - platform
   - r1
