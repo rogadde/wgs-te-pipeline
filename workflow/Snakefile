@@ -31,7 +31,7 @@ samples.sort_index(inplace=True)
 
 include: "rules/ref.smk"
 include: "rules/longranger.smk"
-include: "rules/align.smk"
+include: "rules/bwa.smk"
 include: "rules/xtea.smk"
 
 
