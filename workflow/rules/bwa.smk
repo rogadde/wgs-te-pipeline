@@ -74,7 +74,7 @@ def get_markdup_input(wildcards):
     if isinstance(bams, list) and len(bams) > 1:
         return rules.sambamba_merge.output
     else:
-        return rules.bwa_mem2_mem.output
+        return bams
 
 
 rule samblaster_markdup:
