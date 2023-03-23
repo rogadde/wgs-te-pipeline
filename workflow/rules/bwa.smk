@@ -1,3 +1,4 @@
+# index genome
 rule bwa_mem2_index:
     input:
         rules.gen_ref.output[0],
@@ -20,6 +21,7 @@ def get_fastq(wildcards):
     ]
 
 
+# map reads
 rule bwa_mem2_mem:
     input:
         reads=get_fastq,
@@ -50,6 +52,7 @@ def get_lanes(wildcards):
     return bams
 
 
+# merge lanes
 rule sambamba_merge:
     input:
         get_lanes,
@@ -64,6 +67,7 @@ rule sambamba_merge:
         "v1.24.0/bio/sambamba/merge"
 
 
+# mark duplicates
 rule samblaster_markdup:
     input:
         rules.sambamba_merge.output,
@@ -77,6 +81,7 @@ rule samblaster_markdup:
         "samblaster {input} {output} 2> {log}"
 
 
+# coordinate sort bam
 rule sambamba_sort:
     input:
         rules.samblaster_markdup.output,
@@ -91,6 +96,7 @@ rule sambamba_sort:
         "v1.23.5/bio/sambamba/sort"
 
 
+# index bam
 rule sambamba_index:
     input:
         rules.sambamba_merge.output,
