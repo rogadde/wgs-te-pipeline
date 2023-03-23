@@ -68,13 +68,20 @@ rule sambamba_merge:
 
 
 # mark duplicates
+def get_markdup_input(wildcards):
+    if get_lanes(wildcards) > 1:
+        return rules.sambamba_merge.output
+    else:
+        return rules.bwa_mem2_mem.output
+
+
 rule samblaster_markdup:
     input:
-        rules.sambamba_merge.output,
+        get_markdup_input,
     output:
-        rules.sambamba_merge.output[0].replace(".bam", "markdup.bam"),
+        "{outdir}/align/illumina/{individual}/{sample}.mardkup.bam",
     log:
-        rules.sambamba_merge.log[0].replace("merge", "markdup"),
+        "{outdir}/align/illumina/{individual}/{sample}_mardkup.log",
     conda:
         "../envs/samblaster.yaml"
     shell:
@@ -99,11 +106,11 @@ rule sambamba_sort:
 # index bam
 rule sambamba_index:
     input:
-        rules.sambamba_merge.output,
+        rules.sambamba_sort.output,
     output:
-        rules.sambamba_merge.output[0] + ".bai",
+        rules.sambamba_sort.output[0] + ".bai",
     log:
-        rules.sambamba_merge.log[0].replace("sort", "index"),
+        rules.sambamba_sort.log[0].replace("sort", "index"),
     params:
         extra="",  # this must be present for the wrapper to work
     threads: 8
