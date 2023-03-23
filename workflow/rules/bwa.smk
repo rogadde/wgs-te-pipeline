@@ -81,9 +81,9 @@ rule samblaster_markdup:
     input:
         get_markdup_input,
     output:
-        "{outdir}/align/illumina/{individual}/{sample}.mardkup.bam",
+        "{outdir}/align/illumina/{individual}/{sample}.markdup.bam",
     log:
-        "{outdir}/align/illumina/{individual}/{sample}_mardkup.log",
+        "{outdir}/align/illumina/{individual}/{sample}_markdup.log",
     conda:
         "../envs/samblaster.yaml"
     shell:
