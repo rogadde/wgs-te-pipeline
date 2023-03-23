@@ -69,7 +69,9 @@ rule sambamba_merge:
 
 # mark duplicates
 def get_markdup_input(wildcards):
-    if get_lanes(wildcards) > 1:
+    bams = get_lanes(wildcards)
+    # trigger merge step if there are > 1 lane in sample
+    if isinstance(bams, list) and len(bams) > 1:
         return rules.sambamba_merge.output
     else:
         return rules.bwa_mem2_mem.output

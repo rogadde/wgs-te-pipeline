@@ -30,7 +30,7 @@ def get_bam(wildcards):
         )
         d = {
             "illumina_bam": expand(
-                rules.sambamba_merge.output,
+                rules.sambamba_sort.output,
                 sample=my_platform_samples,
                 allow_missing=True,
             ),
