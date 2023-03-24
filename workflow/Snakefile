@@ -42,6 +42,15 @@ for reptype in config["reptype"]:
     else:
         reptype2.append(reptype.upper())
 
+# determine if each individual has multiple platforms
+platforms = {}
+for i in set(samples["individual_id"]):
+    p = set(samples.loc[i, "platform"])
+    if "illumina" in p and "10x" in p:
+        platforms[i] = "illumina_10x"
+    else:
+        platforms[i] = samples.loc[i, "platform"].iloc[0]
+
 
 rule all:
     input:
@@ -54,8 +63,9 @@ rule all:
                     reptype2=reptype2,
                     allow_missing=True,
                 ),
-                individual=set(samples["individual_id"]),
-                platform="illumina_10x",
+                zip,
+                individual=platforms.keys(),
+                platform=platforms.values(),
                 allow_missing=True,
             ),
             outdir=config["outdir"],
