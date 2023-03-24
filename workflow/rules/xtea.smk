@@ -96,7 +96,7 @@ rule run_xtea:
         blacklist=rules.get_xtea_annotation.output.blacklist,
         fa=rules.gen_ref.output.fa,
     output:
-        "{outdir}/xtea/{platform}/{individual}/{reptype1}/{individual}.aln.sorted_{reptype2}.vcf",
+        "{outdir}/xtea/{platform}/{individual}/{reptype1}/{individual}.markdup.sorted_{reptype2}.vcf",
     threads: 8
     conda:
         "../envs/xtea.yaml"
