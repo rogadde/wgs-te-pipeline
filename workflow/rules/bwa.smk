@@ -11,7 +11,7 @@ rule bwa_mem2_index:
     log:
         "resources/bwa_index.log",
     wrapper:
-        "v1.24.0/bio/bwa-mem2/index"
+        "v1.25.0/bio/bwa-mem2/index"
 
 
 def get_fastq(wildcards):
@@ -37,7 +37,7 @@ rule bwa_mem2_mem:
         sort_extra="",  # Extra args for samtools/picard.
     threads: 32
     wrapper:
-        "v1.24.0/bio/bwa-mem2/mem"
+        "v1.25.0/bio/bwa-mem2/mem"
 
 
 def get_lanes(wildcards):
@@ -64,7 +64,7 @@ rule sambamba_merge:
         extra="",  # this must be present for the wrapper to work
     threads: 8
     wrapper:
-        "v1.24.0/bio/sambamba/merge"
+        "v1.25.0/bio/sambamba/merge"
 
 
 # mark duplicates
@@ -102,7 +102,7 @@ rule sambamba_sort:
         extra="",  # this must be present for the wrapper to work
     threads: 8
     wrapper:
-        "v1.23.5/bio/sambamba/sort"
+        "v1.25.0/bio/sambamba/sort"
 
 
 # index bam
@@ -117,4 +117,4 @@ rule sambamba_index:
         extra="",  # this must be present for the wrapper to work
     threads: 8
     wrapper:
-        "v1.23.5/bio/sambamba/index"
+        "v1.25.0/bio/sambamba/index"
