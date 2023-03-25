@@ -1,3 +1,4 @@
+# TODO: add condition to use custom gencode annotation
 rule get_xtea_annotation:
     output:
         gencode="resources/gencode.v42.annotation.gff3",
@@ -73,7 +74,7 @@ rule prepare_xtea:
         rep_lib=rules.get_xtea_annotation.output.rep_lib,
         gencode=rules.get_xtea_annotation.output.gencode,
         blacklist=rules.get_xtea_annotation.output.blacklist,
-        fa=rules.gen_ref.output.fa,
+        fa=rules.get_genome.output.fa,
     output:
         script=expand(
             "{outdir}/xtea/{platform}/{individual}/{reptype}/run_xTEA_pipeline.sh",
@@ -94,7 +95,7 @@ rule run_xtea:
         rep_lib=rules.get_xtea_annotation.output.rep_lib,
         gencode=rules.get_xtea_annotation.output.gencode,
         blacklist=rules.get_xtea_annotation.output.blacklist,
-        fa=rules.gen_ref.output.fa,
+        fa=rules.get_genome.output.fa,
     output:
         "{outdir}/xtea/{platform}/{individual}/{reptype}.vcf",
     threads: 8

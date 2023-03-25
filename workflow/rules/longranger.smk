@@ -14,13 +14,13 @@ rule install_longranger:
 rule longranger_mkref:
     input:
         longranger=rules.install_longranger.output,
-        fa=rules.gen_ref.output.fa,
+        fa=rules.get_genome.output.fa,
     output:
-        directory(f"resources/refdata-hs38d1{region_name}/"),
+        directory(f"resources/refdata-{genome_name}/"),
     shell:
         """
-        {input.longranger}/longranger mkref {input.fa}
-        mv refdata-hs38d1* resources/
+        cd resources
+        ../{input.longranger}/longranger mkref {input.fa}
         """
 
 
