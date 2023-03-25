@@ -90,18 +90,18 @@ rule prepare_xtea:
 rule run_xtea:
     input:
         unpack(get_bam),
-        script="{outdir}/xtea/{platform}/{individual}/{reptype1}/run_xTEA_pipeline.sh",
+        script="{outdir}/xtea/{platform}/{individual}/{reptype}/run_xTEA_pipeline.sh",
         rep_lib=rules.get_xtea_annotation.output.rep_lib,
         gencode=rules.get_xtea_annotation.output.gencode,
         blacklist=rules.get_xtea_annotation.output.blacklist,
         fa=rules.gen_ref.output.fa,
     output:
-        "{outdir}/xtea/{platform}/{individual}/{reptype1}/{individual}.markdup.sorted_{reptype2}.vcf",
+        "{outdir}/xtea/{platform}/{individual}/{reptype}.vcf",
     threads: 8
     conda:
         "../envs/xtea.yaml"
     log:
-        "{outdir}/xtea/{platform}/{individual}/{reptype1}/run_xtea_{reptype2}.log",
+        "{outdir}/xtea/{platform}/{individual}/{reptype}.log",
     shell:
         """
         touch {log} && exec > {log} 2>&1
@@ -111,4 +111,8 @@ rule run_xtea:
 
         # run xtea
         bash {input.script}
+
+        # move the vcf file to the expected location
+        mv {wildcards.outdir}/xtea/{wildcards.platform}/{wildcards.individual}/{wildcards.reptype}/*vcf \
+            {wildcards.outdir}/xtea/{wildcards.platform}/{wildcards.individual}/{wildcards.reptype}.vcf
         """

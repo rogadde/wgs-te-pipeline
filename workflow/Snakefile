@@ -35,13 +35,6 @@ include: "rules/bwa.smk"
 include: "rules/xtea.smk"
 
 
-reptype2 = []
-for reptype in config["reptype"]:
-    if reptype == "L1":
-        reptype2.append("LINE1")
-    else:
-        reptype2.append(reptype.upper())
-
 # determine if each individual has multiple platforms
 platforms = {}
 for i in set(samples["individual_id"]):
@@ -56,17 +49,13 @@ rule all:
     input:
         expand(
             expand(
-                expand(
-                    rules.run_xtea.output,
-                    zip,
-                    reptype1=config["reptype"],
-                    reptype2=reptype2,
-                    allow_missing=True,
-                ),
-                zip,
-                individual=platforms.keys(),
-                platform=platforms.values(),
+                rules.run_xtea.output,
+                reptype=config["reptype"],
+                outdir=config["outdir"],
                 allow_missing=True,
             ),
-            outdir=config["outdir"],
+            zip,
+            individual=platforms.keys(),
+            platform=platforms.values(),
+            allow_missing=True,
         ),
