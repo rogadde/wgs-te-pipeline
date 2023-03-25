@@ -1,0 +1,36 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+
+description: snakemake configuration file
+
+type: object
+
+properties:
+  individual_id:
+    type: string
+    description: individual ID
+  sample_id:
+    type: string
+    description: sample ID, bams with same sample ID will be merged together
+  lane_id:
+    type: string
+    description: lane ID
+  platform:
+    type: string
+    description: sequencing platform
+    enum:
+      - 10x
+      - illumina
+  r1:
+    type: string
+    description: path to R1 fastq
+  r2:
+    type: string
+    description: path to R2 fastq
+
+required:
+  - individual_id
+  - sample_id
+  - lane_id
+  - platform
+  - r1
+  - r2
