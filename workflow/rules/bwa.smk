@@ -31,9 +31,9 @@ rule bwa_mem2_mem:
     log:
         "{outdir}/align/illumina/{individual}/{sample}_L00{lane}.bwamem2.log",
     params:
-        extra=r"-R '@RG\tID:{individual}\tSM:{sample}'",
+        extra=r"-R '@RG\tID:{individual}\tSM:{sample}\tPL:ILLUMINA'",
         sort="none",  # Can be 'none', 'samtools' or 'picard'.
-        sort_order="queryname",  # Can be 'coordinate' (default) or 'queryname'.
+        sort_order="queryname",  # queryname for samblaster
         sort_extra="",  # Extra args for samtools/picard.
     threads: 32
     wrapper:

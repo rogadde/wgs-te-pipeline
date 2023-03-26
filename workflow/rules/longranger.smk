@@ -16,7 +16,7 @@ rule longranger_mkref:
         longranger=rules.install_longranger.output,
         fa=rules.get_genome.output.fa,
     output:
-        directory(f"resources/refdata-{genome_name}/"),
+        directory("resources/refdata-{}/".format(config["genome"]["name"])),
     shell:
         """
         cd resources
