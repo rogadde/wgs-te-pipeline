@@ -21,13 +21,13 @@ properties:
       name:
         type: string
         description: genome name
-      ftp_gff:
+      http_gff:
         type: string
-        description: ftp link to the gff file containing gene annotations
+        description: http link to the gff file containing gene annotations
     required:
       - ftp_fa
       - name
-      - ftp_gff
+      - http_gff
 
   retype:
     type:

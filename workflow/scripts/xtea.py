@@ -61,7 +61,7 @@ shell(
     "xtea "
     "{cmd} "
     "-r {snakemake.input.fa} "
-    "-g {snakemake.input.gencode} "
+    "-g {snakemake.input.genes} "
     "-l {snakemake.input.rep_lib} "
     "-p {workdir} "
     "-f 5907 "

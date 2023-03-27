@@ -1,10 +1,9 @@
 rule get_xtea_annotation:
     input:
-        FTP.remote(
-            config["genome"]["ftp_gff"],
+        HTTP.remote(
+            config["genome"]["http_gff"],
             keep_local=True,
             static=True,
-            immediate_close=True,
         ),
     output:
         genes="resources/genes.gff3",
@@ -75,11 +74,20 @@ def get_bam(wildcards):
     return i
 
 
+def get_annotation(wildcards):
+    d = {
+        "genes": rules.get_xtea_annotation.output.genes,
+        "rep_lib": rules.get_xtea_annotation.output.rep_lib,
+    }
+    if config["genome"].get("blacklist"):
+        d["blacklist"] = config["genome"]["blacklist"]
+    return d
+
+
 rule prepare_xtea:
     input:
         unpack(get_bam),
-        rep_lib=rules.get_xtea_annotation.output.rep_lib,
-        gencode=rules.get_xtea_annotation.output.genes,
+        unpack(get_annotation),
         fa=rules.get_genome.output.fa,
     output:
         script=expand(
@@ -97,9 +105,8 @@ rule prepare_xtea:
 rule run_xtea:
     input:
         unpack(get_bam),
+        unpack(get_annotation),
         script="{outdir}/xtea/{platform}/{individual}/{reptype}/run_xTEA_pipeline.sh",
-        rep_lib=rules.get_xtea_annotation.output.rep_lib,
-        genes=rules.get_xtea_annotation.output.genes,
         fa=rules.get_genome.output.fa,
     output:
         "{outdir}/xtea/{platform}/{individual}/{reptype}.vcf",
