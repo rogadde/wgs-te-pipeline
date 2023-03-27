@@ -1,13 +1,13 @@
 # index genome
 rule bwa_mem2_index:
     input:
-        rules.gen_ref.output[0],
+        rules.get_genome.output.fa,
     output:
-        rules.gen_ref.output[0] + ".0123",
-        rules.gen_ref.output[0] + ".amb",
-        rules.gen_ref.output[0] + ".ann",
-        rules.gen_ref.output[0] + ".bwt.2bit.64",
-        rules.gen_ref.output[0] + ".pac",
+        rules.get_genome.output.fa + ".0123",
+        rules.get_genome.output.fa + ".amb",
+        rules.get_genome.output.fa + ".ann",
+        rules.get_genome.output.fa + ".bwt.2bit.64",
+        rules.get_genome.output.fa + ".pac",
     log:
         "resources/bwa_index.log",
     wrapper:
@@ -31,9 +31,9 @@ rule bwa_mem2_mem:
     log:
         "{outdir}/align/illumina/{individual}/{sample}_L00{lane}.bwamem2.log",
     params:
-        extra=r"-R '@RG\tID:{individual}\tSM:{sample}'",
+        extra=r"-R '@RG\tID:{individual}\tSM:{sample}\tPL:ILLUMINA'",
         sort="none",  # Can be 'none', 'samtools' or 'picard'.
-        sort_order="queryname",  # Can be 'coordinate' (default) or 'queryname'.
+        sort_order="queryname",  # queryname for samblaster
         sort_extra="",  # Extra args for samtools/picard.
     threads: 32
     wrapper:
@@ -87,7 +87,7 @@ rule samblaster_markdup:
     conda:
         "../envs/samblaster.yaml"
     shell:
-        "samtools view -h {input} | samblaster | samtools view -Sb - > {output} 2> {log}"
+        "samtools view -h {input} | samblaster 2> {log} | samtools view -Sb - > {output} 2> {log}"
 
 
 # coordinate sort bam

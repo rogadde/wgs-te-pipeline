@@ -11,9 +11,24 @@ properties:
   samples:
     type: string
     description: path to the runsheet
-  region:
-    type: string
-    description: path to the patientsheet
+  genome:
+    type: object
+    description: genome information
+    properties:
+      ftp_fa:
+        type: string
+        description: ftp link to the genome fasta file
+      name:
+        type: string
+        description: genome name
+      http_gff:
+        type: string
+        description: http link to the gff file containing gene annotations
+    required:
+      - ftp_fa
+      - name
+      - http_gff
+
   retype:
     type:
       - array
@@ -29,5 +44,5 @@ properties:
 required:
   - samples
   - outdir
-  - region
+  - genome
   - reptype

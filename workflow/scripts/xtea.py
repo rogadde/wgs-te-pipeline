@@ -36,6 +36,7 @@ with tempfile.NamedTemporaryFile("w", delete=False) as tmpfile:
     tmpfile.write(snakemake.wildcards.individual)
     cmd = f"-i {tmpfile.name} "
 
+# make bam for 10x and/or illumina platforms
 if "10x" in snakemake.wildcards.platform:
     with tempfile.NamedTemporaryFile("w", delete=False) as tmpfile:
         for b, bx in zip(snakemake.input["10x_bam"], snakemake.input["10x_bx_bam"]):
@@ -52,15 +53,18 @@ if "illumina" in snakemake.wildcards.platform:
 else:
     cmd += "-b null "
 
+# add blacklist if specified
+if "blacklist" in snakemake.input:
+    cmd += f"--blacklist {snakemake.input.blacklist} "
+
 shell(
     "xtea "
     "{cmd} "
     "-r {snakemake.input.fa} "
-    "-g {snakemake.input.gencode} "
+    "-g {snakemake.input.genes} "
     "-l {snakemake.input.rep_lib} "
     "-p {workdir} "
     "-f 5907 "
-    "--blacklist {snakemake.input.blacklist} "
     "-y {reptype} "
     "-n {snakemake.threads} "
     "--xtea $CONDA_PREFIX/lib "

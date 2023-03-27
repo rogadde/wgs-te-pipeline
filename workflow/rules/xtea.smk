@@ -1,8 +1,13 @@
 rule get_xtea_annotation:
+    input:
+        HTTP.remote(
+            config["genome"]["http_gff"],
+            keep_local=True,
+            static=True,
+        ),
     output:
-        gencode="resources/gencode.v42.annotation.gff3",
+        genes="resources/genes.gff3",
         rep_lib=directory("resources/rep_lib_annotation"),
-        blacklist="resources/sv_blacklist.bed",
     log:
         "resources/get_xtea_annotation.log",
     conda:
@@ -10,13 +15,15 @@ rule get_xtea_annotation:
     shell:
         """
         touch {log} && exec > {log} 2>&1
-        curl http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_42/gencode.v42.annotation.gff3.gz | \
-            gunzip -c > {output.gencode}
+
+        # get the genes
+        gunzip -c {input} > {output.genes}
+
+        # get the replib
         mkdir -p {output.rep_lib}
         wget https://github.com/parklab/xTea/raw/master/rep_lib_annotation.tar.gz
         tar -xvf rep_lib_annotation.tar.gz -C {output.rep_lib}
         rm -f rep_lib_annotation.tar.gz
-        curl https://cf.10xgenomics.com/supp/genome/GRCh38/sv_blacklist.bed > {output.blacklist}
         """
 
 
@@ -67,13 +74,21 @@ def get_bam(wildcards):
     return i
 
 
+def get_annotation(wildcards):
+    d = {
+        "genes": rules.get_xtea_annotation.output.genes,
+        "rep_lib": rules.get_xtea_annotation.output.rep_lib,
+    }
+    if config["genome"].get("blacklist"):
+        d["blacklist"] = config["genome"]["blacklist"]
+    return d
+
+
 rule prepare_xtea:
     input:
         unpack(get_bam),
-        rep_lib=rules.get_xtea_annotation.output.rep_lib,
-        gencode=rules.get_xtea_annotation.output.gencode,
-        blacklist=rules.get_xtea_annotation.output.blacklist,
-        fa=rules.gen_ref.output.fa,
+        unpack(get_annotation),
+        fa=rules.get_genome.output.fa,
     output:
         script=expand(
             "{outdir}/xtea/{platform}/{individual}/{reptype}/run_xTEA_pipeline.sh",
@@ -90,11 +105,9 @@ rule prepare_xtea:
 rule run_xtea:
     input:
         unpack(get_bam),
+        unpack(get_annotation),
         script="{outdir}/xtea/{platform}/{individual}/{reptype}/run_xTEA_pipeline.sh",
-        rep_lib=rules.get_xtea_annotation.output.rep_lib,
-        gencode=rules.get_xtea_annotation.output.gencode,
-        blacklist=rules.get_xtea_annotation.output.blacklist,
-        fa=rules.gen_ref.output.fa,
+        fa=rules.get_genome.output.fa,
     output:
         "{outdir}/xtea/{platform}/{individual}/{reptype}.vcf",
     threads: 8
