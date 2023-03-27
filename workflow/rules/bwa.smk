@@ -87,7 +87,7 @@ rule samblaster_markdup:
     conda:
         "../envs/samblaster.yaml"
     shell:
-        "samtools view -h {input} | samblaster | samtools view -Sb - > {output} 2> {log}"
+        "samtools view -h {input} | samblaster 2> {log} | samtools view -Sb - > {output} 2> {log}"
 
 
 # coordinate sort bam
