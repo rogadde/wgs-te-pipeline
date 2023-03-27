@@ -1,7 +1,7 @@
 rule get_genome:
     input:
         FTP.remote(
-            config["genome"]["ftp"],
+            config["genome"]["ftp_fa"],
             keep_local=True,
             static=True,
             immediate_close=True,
