@@ -60,7 +60,7 @@ shell(
     "-l {snakemake.input.rep_lib} "
     "-p {workdir} "
     "-f 5907 "
-    "--blacklist {snakemake.input.blacklist} "
+    "--blacklist {snakemake.input.rep_lib}/blacklist/hg38/sv_blacklist.bed "
     "-y {reptype} "
     "-n {snakemake.threads} "
     "--xtea $CONDA_PREFIX/lib "

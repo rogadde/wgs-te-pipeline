@@ -53,18 +53,17 @@ def get_lanes(wildcards):
 
 
 # merge lanes
-rule sambamba_merge:
+rule samtools_cat:
     input:
         get_lanes,
     output:
         "{outdir}/align/illumina/{individual}/{sample}.bam",
     log:
-        "{outdir}/align/illumina/{individual}/{sample}_merge.log",
-    params:
-        extra="",  # this must be present for the wrapper to work
-    threads: 8
-    wrapper:
-        "v1.25.0/bio/sambamba/merge"
+        "{outdir}/align/illumina/{individual}/{sample}_cat.log",
+    conda:
+        "../envs/samblaster.yaml"
+    shell:
+        "samtools cat -o {output} {input} 2> {log}"
 
 
 # mark duplicates
@@ -72,7 +71,7 @@ def get_markdup_input(wildcards):
     bams = get_lanes(wildcards)
     # trigger merge step if there are > 1 lane in sample
     if isinstance(bams, list) and len(bams) > 1:
-        return rules.sambamba_merge.output
+        return rules.samtools_cat.output
     else:
         return bams
 
