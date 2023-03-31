@@ -60,6 +60,8 @@ rule samtools_cat:
         "{outdir}/align/illumina/{individual}/{sample}.bam",
     log:
         "{outdir}/align/illumina/{individual}/{sample}_cat.log",
+    wildcard_constraints:
+        sample="\w+",
     conda:
         "../envs/samblaster.yaml"
     shell:
