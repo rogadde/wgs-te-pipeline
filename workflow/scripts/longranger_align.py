@@ -24,7 +24,7 @@ shell(
     "--disable-ui "
 )
 
-outdir = str(Path(snakemake.output.bam).parent.parent)
+outdir = str(Path(snakemake.output.bam).parent.parent.parent)
 os.makedirs(outdir, exist_ok=True)
 
 shell("mv {snakemake.wildcards.sample} {outdir}")
