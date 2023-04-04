@@ -45,7 +45,7 @@ rule rule_install_barcodemate:
     shell:
         """
         cd resources
-        git clone https://github.com/simoncchu/BarcodeMate
+        git clone https://github.com/mikecuoco/BarcodeMate
         """
 
 
