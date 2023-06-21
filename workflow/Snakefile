@@ -21,6 +21,7 @@ configfile: "config/config.yaml"
 wildcard_constraints:
     reptype="\w+",
     sample="\w+",
+    individual="\w+",
 
 
 samples = pd.read_csv(config["samples"], sep="\t", dtype=str).set_index(
@@ -29,6 +30,7 @@ samples = pd.read_csv(config["samples"], sep="\t", dtype=str).set_index(
 samples.sort_index(inplace=True)
 
 
+include: "rules/qc.smk"
 include: "rules/ref.smk"
 include: "rules/longranger.smk"
 include: "rules/bwa.smk"
@@ -47,6 +49,10 @@ for i in set(samples["individual_id"]):
 
 rule all:
     input:
+        expand(
+            rules.multiqc.output,
+            outdir=config["outdir"],
+        ),
         expand(
             expand(
                 rules.run_xtea.output,
