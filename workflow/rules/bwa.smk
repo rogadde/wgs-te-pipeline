@@ -35,7 +35,7 @@ rule bwa_mem2_mem:
         sort="none",  # Can be 'none', 'samtools' or 'picard'.
         sort_order="queryname",  # Can be 'coordinate' (default) or 'queryname'.
         sort_extra="",  # Extra args for samtools/picard.
-    threads: 32
+    threads: 8
     wrapper:
         "v1.25.0/bio/bwa-mem2/mem"
 
