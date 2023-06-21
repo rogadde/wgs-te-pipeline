@@ -34,7 +34,7 @@ rule longranger_align:
     output:
         bam="{outdir}/align/10x/{individual}/{sample}/outs/possorted_bam.bam",
         bai="{outdir}/align/10x/{individual}/{sample}/outs/possorted_bam.bam.bai",
-    threads: 32
+    threads: 48
     script:
         "../scripts/longranger_align.py"
 
@@ -45,7 +45,7 @@ rule rule_install_barcodemate:
     shell:
         """
         cd resources
-        git clone https://github.com/simoncchu/BarcodeMate
+        git clone https://github.com/mikecuoco/BarcodeMate
         """
 
 
@@ -55,12 +55,12 @@ rule barcodemate:
         bam=rules.longranger_align.output.bam,
         bai=rules.longranger_align.output.bai,
     output:
-        bam=rules.longranger_align.output.bam.replace("bam", "barcodemate.bam"),
+        bam=rules.longranger_align.output.bam.replace(".bam", "_barcodemate.bam"),
     conda:
         "../envs/barcodemate.yaml"
     log:
-        rules.longranger_align.output.bam.replace("bam", "barcodemate.log"),
-    threads: 32
+        rules.longranger_align.output.bam.replace(".bam", "_barcodemate.log"),
+    threads: 48
     shell:
         """
         # make tmpdir in same directory as output to avoid cross-device link error
