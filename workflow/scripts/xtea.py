@@ -53,17 +53,16 @@ else:
     cmd += "-b null "
 
 shell(
-    "xtea "
+    "{snakemake.input.xtea}/bin/xtea "
     "{cmd} "
     "-r {snakemake.input.fa} "
     "-g {snakemake.input.gencode} "
     "-l {snakemake.input.rep_lib} "
     "-p {workdir} "
     "-f 5907 "
-    "--blacklist {snakemake.input.rep_lib}/blacklist/hg38/sv_blacklist.bed "
     "-y {reptype} "
     "-n {snakemake.threads} "
-    "--xtea $CONDA_PREFIX/lib "
+    "--xtea {snakemake.input.xtea}/xtea "
 )
 
 
