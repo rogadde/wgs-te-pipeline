@@ -6,4 +6,10 @@ logs/**
 .snakemake/**
 .test/results**
 .test/resources**
+.test/ftp*/**
+.test/github.com/**
 .snakemake-cache
+github.com/**
+ftp*/**
+config/*tsv
+config/*ipynb
