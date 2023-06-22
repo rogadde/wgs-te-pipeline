@@ -1,3 +1,4 @@
+# TODO: turn this into postdeploy script?
 rule get_xtea_annotation:
     output:
         xtea=directory("resources/xtea"),
@@ -93,6 +94,7 @@ rule run_xtea:
         rep_lib=rules.get_xtea_annotation.output.rep_lib,
         gencode=rules.get_xtea_annotation.output.gencode,
         fa=rules.get_genome.output.fa,
+        xtea=rules.get_xtea_annotation.output.xtea,
     output:
         "{outdir}/xtea/{platform}/{individual}/{reptype}.vcf",
     threads: 8
