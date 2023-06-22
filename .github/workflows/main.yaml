@@ -21,6 +21,38 @@ jobs:
           VALIDATE_R: true
           VALIDATE_PYTHON_BLACK: true
 
+  Generate-Test-Data:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -l {0}
+    needs:
+      - Formatting
+      - uses: actions/checkout@v3
+        with:
+          lfs: true
+          submodules: recursive
+      - name: Cache test data
+        id: test-cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            .test/ngs-test-data
+          key: test-data
+      - name: Install Mamba
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          miniforge-variant: Mambaforge-pypy3
+          miniforge-version: latest
+          use-mamba: true
+          python-version: 3.9
+          channels: conda-forge,bioconda,nodefaults
+          channel-priority: strict
+          environment-file: environment.yaml
+      - name: Generate test data
+        run: cd .test/ngs-test-data && snakemake wgs --use-conda --cores 2
+
+
   Testing:
     runs-on: ubuntu-latest
     defaults:
@@ -28,6 +60,7 @@ jobs:
         shell: bash -l {0}
     needs:
       - Formatting
+      - Generate-Test-Data
     strategy:
       matrix:
         build: ["hg38","chm13"]
@@ -37,11 +70,17 @@ jobs:
           lfs: true
           submodules: recursive
       - name: Cache test data
-        id: cache-sm
+        id: test-cache
         uses: actions/cache@v3
         with:
           path: |
             .test/ngs-test-data
+          key: test-data
+      - name: Cache job resources
+        id: cache-sm
+        uses: actions/cache@v3
+        with:
+          path: |
             .test/resources
             .test/ftp.ncbi.nlm.nih.gov
             .test/hgdownload.soe.ucsc.edu
@@ -56,8 +95,6 @@ jobs:
           channels: conda-forge,bioconda,nodefaults
           channel-priority: strict
           environment-file: environment.yaml
-      - name: Generate test data
-        run: cd .test/ngs-test-data && snakemake wgs --use-conda --cores 2
       - name: Run workflow
         run: |
           snakemake all \
