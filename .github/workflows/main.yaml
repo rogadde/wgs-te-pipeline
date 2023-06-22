@@ -43,7 +43,7 @@ jobs:
           path: |
             .test/ngs-test-data
             .test/resources
-          key: ${{ runner.os }}-sm
+          key: ${{ matrix.build }}-sm
       - name: Install Mamba
         uses: conda-incubator/setup-miniconda@v2
         with:
