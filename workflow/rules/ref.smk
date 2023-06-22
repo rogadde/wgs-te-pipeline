@@ -16,6 +16,7 @@ rule get_genome:
             keep_local=True,
             static=True,
             immediate_close=True,
+            timeout=600,
         ),
     output:
         fa=f"resources/{genome_name}.fa",
