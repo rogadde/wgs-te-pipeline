@@ -51,6 +51,7 @@ jobs:
           channel-priority: strict
           environment-file: environment.yaml
       - name: Generate test data
+        if: steps.test-cache.outputs.cache-hit != 'true'
         run: cd .test/ngs-test-data && snakemake wgs --use-conda --cores 2
 
   Testing:
