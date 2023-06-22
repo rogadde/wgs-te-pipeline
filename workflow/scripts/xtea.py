@@ -9,8 +9,9 @@ from snakemake.shell import shell
 
 sys.stderr = open(snakemake.log[0], "w")
 
-# convert string reptype into int for xtea input
+
 def get_reptype(rep: str):
+    "convert string reptype into int for xtea input"
     if rep == "L1":
         return 1
     elif rep == "Alu":
@@ -23,6 +24,7 @@ def get_reptype(rep: str):
         return 16
 
 
+# make reptype argument for xTea
 if type(snakemake.config["reptype"]) is str:
     reptype = get_reptype(snakemake.config["reptype"])
 else:
@@ -38,6 +40,7 @@ with tempfile.NamedTemporaryFile("w", delete=False) as tmpfile:
     tmpfile.write(snakemake.wildcards.individual)
     cmd = f"-i {tmpfile.name} "
 
+# handle bams for 10x and/or illumina
 if "10x" in snakemake.wildcards.platform:
     with tempfile.NamedTemporaryFile("w", delete=False) as tmpfile:
         for b, bx in zip(snakemake.input["10x_bam"], snakemake.input["10x_bx_bam"]):
@@ -54,6 +57,7 @@ if "illumina" in snakemake.wildcards.platform:
 else:
     cmd += "-b null "
 
+# handle different genomes
 if "38" in snakemake.config["genome"]["name"]:
     pyscript = f"{snakemake.input.xtea}/xtea/gnrt_pipeline_local_v38.py "
 elif "chm13" in snakemake.config["genome"]["name"]:
