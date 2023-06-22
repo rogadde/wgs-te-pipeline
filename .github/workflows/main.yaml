@@ -43,6 +43,8 @@ jobs:
           path: |
             .test/ngs-test-data
             .test/resources
+            .test/ftp.ncbi.nlm.nih.gov
+            .test/hgdownload.soe.ucsc.edu
           key: ${{ matrix.build }}-sm
       - name: Install Mamba
         uses: conda-incubator/setup-miniconda@v2
