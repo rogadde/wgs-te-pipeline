@@ -28,6 +28,7 @@ jobs:
         shell: bash -l {0}
     needs:
       - Formatting
+    steps:
       - uses: actions/checkout@v3
         with:
           lfs: true
@@ -51,7 +52,6 @@ jobs:
           environment-file: environment.yaml
       - name: Generate test data
         run: cd .test/ngs-test-data && snakemake wgs --use-conda --cores 2
-
 
   Testing:
     runs-on: ubuntu-latest
