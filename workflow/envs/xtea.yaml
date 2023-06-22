@@ -11,6 +11,7 @@ dependencies:
   - pysam
   - sortedcontainers
   - ipykernel
-  - xtea==0.1.9
+  - git-lfs
+  - pandas
   - pip:
       - deep-forest>=0.1.7

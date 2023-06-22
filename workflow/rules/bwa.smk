@@ -1,13 +1,13 @@
 # index genome
 rule bwa_mem2_index:
     input:
-        rules.gen_ref.output[0],
+        rules.get_genome.output[0],
     output:
-        rules.gen_ref.output[0] + ".0123",
-        rules.gen_ref.output[0] + ".amb",
-        rules.gen_ref.output[0] + ".ann",
-        rules.gen_ref.output[0] + ".bwt.2bit.64",
-        rules.gen_ref.output[0] + ".pac",
+        rules.get_genome.output[0] + ".0123",
+        rules.get_genome.output[0] + ".amb",
+        rules.get_genome.output[0] + ".ann",
+        rules.get_genome.output[0] + ".bwt.2bit.64",
+        rules.get_genome.output[0] + ".pac",
     log:
         "resources/bwa_index.log",
     wrapper:

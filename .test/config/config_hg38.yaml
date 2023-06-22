@@ -1,0 +1,10 @@
+samples: config/samplesheet.tsv
+outdir: results
+genome:
+  name: hs38d1
+  region: chr20 # must be chr20
+  fasta: ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/seqs_for_alignment_pipelines.ucsc_ids/GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna.gz
+longranger_url: "https://cf.10xgenomics.com/releases/genome/longranger-2.2.2.tar.gz?Expires=1678898785&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9jZi4xMHhnZW5vbWljcy5jb20vcmVsZWFzZXMvZ2Vub21lL2xvbmdyYW5nZXItMi4yLjIudGFyLmd6IiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjc4ODk4Nzg1fX19XX0_&Signature=H9V50n6vJvQtjWA~ZUddvK4~SMK42BY1NFHZ~wJo3cd7YP-NM5psNiH-sNfeOQsEiPmjiAxyPnahCRKmYO8BJXFRc1FVCCCHwkNZIfjmZKtlXciBYOOyv9JGHQc~A40sDeNvHCj2DDFdlW0LFa-AmTEWAAscQy2GdxCIxL9Sh-DY6huhj1StkXlYjkVqx8qP5om4Lh6eWm1E1-BRys4ldNySXf-e6P-tKVe8sMu74-pXq0rdTWkWY-2IUGgyrn02CcYbEVdlMKmo7dFX~SQtr2DBt1hzYRe4Dybxf2kNJjdczNgljRIz4rpwf7u57YAAAco9X1OzKDC2~9RpaWoGLQ__&Key-Pair-Id=APKAI7S6A5RYOXBWRPDA"
+reptype:
+  - L1
+  - Alu

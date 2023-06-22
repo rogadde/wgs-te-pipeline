@@ -1,2 +1,2 @@
 individual_id	sample_id	platform	lane_id	r1	r2
-A	a	illumina	1	ngs-test-data/wgs/a.chr21.1.fq.gz	ngs-test-data/wgs/a.chr21.2.fq.gz
+A	a	illumina	1	ngs-test-data/wgs/a.chr20.1.fq.gz	ngs-test-data/wgs/a.chr20.2.fq.gz

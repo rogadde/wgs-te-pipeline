@@ -1,5 +1,7 @@
+# TODO: turn this into postdeploy script?
 rule get_xtea_annotation:
     output:
+        xtea=directory("resources/xtea"),
         gencode="resources/gencode.v42.annotation.gff3",
         rep_lib=directory("resources/rep_lib_annotation"),
     log:
@@ -9,12 +11,12 @@ rule get_xtea_annotation:
     shell:
         """
         touch {log} && exec > {log} 2>&1
+        git clone https://github.com/mikecuoco/xTea.git {output.xtea}
+        mkdir -p {output.rep_lib}
+        tar -xvf {output.xtea}/rep_lib_annotation.tar.gz -C {output.rep_lib}
+
         curl http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_42/gencode.v42.annotation.gff3.gz | \
             gunzip -c > {output.gencode}
-        mkdir -p {output.rep_lib}
-        wget https://github.com/parklab/xTea/raw/master/rep_lib_annotation.tar.gz
-        tar -xvf rep_lib_annotation.tar.gz -C {output.rep_lib}
-        rm -f rep_lib_annotation.tar.gz
         """
 
 
@@ -70,7 +72,8 @@ rule prepare_xtea:
         unpack(get_bam),
         rep_lib=rules.get_xtea_annotation.output.rep_lib,
         gencode=rules.get_xtea_annotation.output.gencode,
-        fa=rules.gen_ref.output.fa,
+        fa=rules.get_genome.output.fa,
+        xtea=rules.get_xtea_annotation.output.xtea,
     output:
         script=expand(
             "{outdir}/xtea/{platform}/{individual}/{reptype}/run_xTEA_pipeline.sh",
@@ -78,6 +81,8 @@ rule prepare_xtea:
             allow_missing=True,
         ),
     threads: 8
+    log:
+        "{outdir}/xtea/{platform}/{individual}/prepare_xtea.log",
     conda:
         "../envs/xtea.yaml"
     script:
@@ -90,7 +95,8 @@ rule run_xtea:
         script="{outdir}/xtea/{platform}/{individual}/{reptype}/run_xTEA_pipeline.sh",
         rep_lib=rules.get_xtea_annotation.output.rep_lib,
         gencode=rules.get_xtea_annotation.output.gencode,
-        fa=rules.gen_ref.output.fa,
+        fa=rules.get_genome.output.fa,
+        xtea=rules.get_xtea_annotation.output.xtea,
     output:
         "{outdir}/xtea/{platform}/{individual}/{reptype}.vcf",
     threads: 8

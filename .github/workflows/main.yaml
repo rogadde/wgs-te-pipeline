@@ -21,7 +21,7 @@ jobs:
           VALIDATE_R: true
           VALIDATE_PYTHON_BLACK: true
 
-  Testing:
+  Generate-Test-Data:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -34,17 +34,12 @@ jobs:
           lfs: true
           submodules: recursive
       - name: Cache test data
-        id: cache-sm
+        id: test-cache
         uses: actions/cache@v3
         with:
           path: |
             .test/ngs-test-data
-            .test/resources
-          key: ${{ runner.os }}-sm
-      - name: Setup Singularity
-        uses: eWaterCycle/setup-singularity@v7
-        with:
-          singularity-version: 3.8.3
+          key: test-data
       - name: Install Mamba
         uses: conda-incubator/setup-miniconda@v2
         with:
@@ -56,13 +51,58 @@ jobs:
           channel-priority: strict
           environment-file: environment.yaml
       - name: Generate test data
+        if: steps.test-cache.outputs.cache-hit != 'true'
         run: cd .test/ngs-test-data && snakemake wgs --use-conda --cores 2
+
+  Testing:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -l {0}
+    needs:
+      - Formatting
+      - Generate-Test-Data
+    strategy:
+      matrix:
+        build: ["hg38","chm13"]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          lfs: true
+          submodules: recursive
+      - name: Cache test data
+        id: test-cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            .test/ngs-test-data
+          key: test-data
+      - name: Cache job resources
+        id: cache-sm
+        uses: actions/cache@v3
+        with:
+          path: |
+            .test/resources
+            .test/ftp.ncbi.nlm.nih.gov
+            .test/hgdownload.soe.ucsc.edu
+          key: ${{ matrix.build }}-sm
+      - name: Install Mamba
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          miniforge-variant: Mambaforge-pypy3
+          miniforge-version: latest
+          use-mamba: true
+          python-version: 3.9
+          channels: conda-forge,bioconda,nodefaults
+          channel-priority: strict
+          environment-file: environment.yaml
       - name: Run workflow
         run: |
           snakemake all \
           --use-conda \
           --use-singularity \
           --directory .test \
+          --configfile .test/config/config_${{ matrix.build }}.yaml \
           --cores 2 \
           --show-failed-logs \
           --conda-cleanup-pkgs cache \
