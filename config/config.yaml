@@ -1,3 +1,9 @@
-samples: config/samplesheet.tsv
+samples: config/LIBD_30x_samplesheet.tsv
 outdir: results
-region: chr21
+genome:
+  name:
+  region: all
+  fasta:
+longranger_url: https://cf.10xgenomics.com/releases/genome/longranger-2.2.2.tar.gz?Expires=1681718457&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9jZi4xMHhnZW5vbWljcy5jb20vcmVsZWFzZXMvZ2Vub21lL2xvbmdyYW5nZXItMi4yLjIudGFyLmd6IiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjgxNzE4NDU3fX19XX0_&Signature=dA0mpGPrdiDQDukICPg8UzjvHusnu1v5KSbtxtejCYM~k5d-i5n15EOaY2B8FXFalyDGHZmNc7Kd~KzhTTBcu-~8jgUmdGvii9Iuji8-ekRfxofEM3HOnHdvUQEne5v~YzysDZ8PGNummKTtv66rKj2-sw-8T3c0l~VHUEwgG4k03ODu9QgQot~5pxehWQcPT33~x~zD9Ohfb~0PIYqj-VErUenCMsaefclF-RHL726t9GYJpagtDvMmowRSBbOYqtG7Dr1d~b4D7m7MbZxfZVwNLem-UaZy8SX0t0L4MGvpuGJcFhxvS9BGrP5iHt5zTADNGlsyb9mcvxEeilfMEg__&Key-Pair-Id=APKAI7S6A5RYOXBWRPDA
+reptype:
+  - L1

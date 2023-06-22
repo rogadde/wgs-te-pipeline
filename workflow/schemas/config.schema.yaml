@@ -11,9 +11,21 @@ properties:
   samples:
     type: string
     description: path to the runsheet
-  region:
-    type: string
-    description: path to the patientsheet
+  genome:
+    type: object
+    description: information about the reference genome
+    properties:
+      region:
+        type: string
+      name:
+        type: string
+      fasta:
+        type: string
+    required:
+      - name
+      - region
+      - fasta
+
   retype:
     type:
       - array
@@ -28,6 +40,7 @@ properties:
 
 required:
   - samples
+  - genome
   - outdir
   - region
   - reptype

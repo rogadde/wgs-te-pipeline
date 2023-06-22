@@ -11,7 +11,7 @@ rule get_xtea_annotation:
     shell:
         """
         touch {log} && exec > {log} 2>&1
-        git clone https://github.com/parklab/xTea.git {output.xtea}
+        git clone https://github.com/mikecuoco/xTea.git {output.xtea}
         mkdir -p {output.rep_lib}
         tar -xvf {output.xtea}/rep_lib_annotation.tar.gz -C {output.rep_lib}
 
@@ -81,6 +81,8 @@ rule prepare_xtea:
             allow_missing=True,
         ),
     threads: 8
+    log:
+        "{outdir}/xtea/{platform}/{individual}/prepare_xtea.log",
     conda:
         "../envs/xtea.yaml"
     script:

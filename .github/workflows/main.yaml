@@ -28,6 +28,9 @@ jobs:
         shell: bash -l {0}
     needs:
       - Formatting
+    strategy:
+      matrix:
+        build: ["hg38","chm13"]
     steps:
       - uses: actions/checkout@v3
         with:
@@ -63,6 +66,7 @@ jobs:
           --use-conda \
           --use-singularity \
           --directory .test \
+          --configfile .test/config/config_${{ matrix.build }}.yaml \
           --cores 2 \
           --show-failed-logs \
           --conda-cleanup-pkgs cache \

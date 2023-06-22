@@ -3,9 +3,11 @@
 __author__ = "Michael Cuoco"
 
 
-import tempfile, os
+import tempfile, os, sys
 from pathlib import Path
 from snakemake.shell import shell
+
+sys.stderr = open(snakemake.log[0], "w")
 
 # convert string reptype into int for xtea input
 def get_reptype(rep: str):
@@ -52,8 +54,16 @@ if "illumina" in snakemake.wildcards.platform:
 else:
     cmd += "-b null "
 
+if "38" in snakemake.config["genome"]["name"]:
+    pyscript = f"{snakemake.input.xtea}/xtea/gnrt_pipeline_local_v38.py "
+elif "chm13" in snakemake.config["genome"]["name"]:
+    pyscript = f"{snakemake.input.xtea}/xtea/gnrt_pipeline_local_chm13.py "
+else:
+    ValueError("Genome {} not supported".format(snakemake.config["genome"]["name"]))
+
 shell(
-    "{snakemake.input.xtea}/bin/xtea "
+    "python "
+    "{pyscript} "
     "{cmd} "
     "-r {snakemake.input.fa} "
     "-g {snakemake.input.gencode} "
@@ -67,3 +77,5 @@ shell(
 
 
 os.remove("submit_calling_jobs_for_samples.sh")
+
+sys.stderr.close()
