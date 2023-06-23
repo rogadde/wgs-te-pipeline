@@ -30,6 +30,7 @@ samples = pd.read_csv(config["samples"], sep="\t", dtype=str).set_index(
 samples.sort_index(inplace=True)
 
 
+include: "rules/trim.smk"
 include: "rules/qc.smk"
 include: "rules/ref.smk"
 include: "rules/longranger.smk"

@@ -1,5 +1,12 @@
 # TODO: turn this into postdeploy script?
 rule get_xtea_annotation:
+    input:
+        FTP.remote(
+            "ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_42/gencode.v42.annotation.gff3.gz",
+            keep_local=True,
+            static=True,
+            immediate_close=True,
+        ),
     output:
         xtea=directory("resources/xtea"),
         gencode="resources/gencode.v42.annotation.gff3",
@@ -15,8 +22,7 @@ rule get_xtea_annotation:
         mkdir -p {output.rep_lib}
         tar -xvf {output.xtea}/rep_lib_annotation.tar.gz -C {output.rep_lib}
 
-        curl http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_42/gencode.v42.annotation.gff3.gz | \
-            gunzip -c > {output.gencode}
+        gunzip -c {input} > {output.gencode}
         """
 
 
