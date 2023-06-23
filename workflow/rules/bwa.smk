@@ -14,17 +14,13 @@ rule bwa_mem2_index:
         "v1.25.0/bio/bwa-mem2/index"
 
 
-def get_fastq(wildcards):
-    return samples.loc[
-        (wildcards.individual, "illumina", wildcards.sample, wildcards.lane),
-        ["r1", "r2"],
-    ]
-
-
 # map reads
 rule bwa_mem2_mem:
     input:
-        reads=get_fastq,
+        reads=[
+            "{outdir}/trimmed/illumina/{individual}/{sample}_L00{lane}.1.fq.gz",
+            "{outdir}/trimmed/illumina/{individual}/{sample}_L00{lane}.2.fq.gz",
+        ],
         idx=rules.bwa_mem2_index.output,
     output:
         "{outdir}/align/illumina/{individual}/{sample}_L00{lane}.bam",
