@@ -13,3 +13,4 @@ github.com/**
 ftp*/**
 config/*tsv
 config/*ipynb
+*edu/**
