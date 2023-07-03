@@ -35,8 +35,10 @@ samples.sort_index(inplace=True)
 validate(samples, "schemas/samples.schema.yaml")
 
 
-def is_paired_end(individual, sample, lane):
-    ss = samples.loc[(individual, "illumina", sample, lane), :]
+def is_paired_end(wildcards):
+    ss = samples.loc[
+        (wildcards.individual, "illumina", wildcards.sample, wildcards.lane), :
+    ]
     # check that r2 is present and not NaN for this sample
     if ("r2" in ss.index) and (ss.r2 == ss.r2):
         return True
@@ -44,10 +46,15 @@ def is_paired_end(individual, sample, lane):
         return False
 
 
+def get_fastq(wildcards, read: str):
+    return samples.loc[
+        (wildcards.individual, wildcards.platform, wildcards.sample, wildcards.lane),
+        read,
+    ]
+
+
 samples["units"] = samples.apply(
-    lambda row: ["r1", "r2"]
-    if is_paired_end(row.individual_id, row.sample_id, row.lane_id)
-    else "r1",
+    lambda ss: ["r1", "r2"] if ("r2" in ss.index) and (ss.r2 == ss.r2) else "r1",
     axis=1,
 )
 

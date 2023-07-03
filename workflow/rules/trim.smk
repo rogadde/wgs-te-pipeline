@@ -1,8 +1,6 @@
 rule trimmomatic_se:
     input:
-        r1=lambda wc: samples.loc[
-            (wc.individual, wc.platform, wc.sample, wc.lane), "r1"
-        ],
+        r1=lambda wc: get_fastq(wc, "r1"),
     output:
         r1="{outdir}/trimmed/{platform}/{individual}/{sample}_L00{lane}.fq.gz",
     log:
@@ -19,12 +17,8 @@ rule trimmomatic_se:
 
 rule trimmomatic_pe:
     input:
-        r1=lambda wc: samples.loc[
-            (wc.individual, wc.platform, wc.sample, wc.lane), "r1"
-        ],
-        r2=lambda wc: samples.loc[
-            (wc.individual, wc.platform, wc.sample, wc.lane), "r2"
-        ],
+        r1=lambda wc: get_fastq(wc, "r1"),
+        r2=lambda wc: get_fastq(wc, "r2"),
     output:
         r1="{outdir}/trimmed/{platform}/{individual}/{sample}_L00{lane}.1.fq.gz",
         r2="{outdir}/trimmed/{platform}/{individual}/{sample}_L00{lane}.2.fq.gz",
