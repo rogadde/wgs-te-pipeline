@@ -25,6 +25,7 @@ wildcard_constraints:
     reptype="\w+",
     sample="\w+",
     individual="\w+",
+    lane="\d+",
 
 
 samples = pd.read_csv(config["samples"], sep="\t", dtype=str).set_index(
@@ -32,6 +33,22 @@ samples = pd.read_csv(config["samples"], sep="\t", dtype=str).set_index(
 )
 samples.sort_index(inplace=True)
 validate(samples, "schemas/samples.schema.yaml")
+
+
+def is_paired_end(individual, sample, lane):
+    ss = samples.loc[(individual, "illumina", sample, lane), :]
+    if ("r2" in ss.index) and (ss.r2):
+        return True
+    else:
+        return False
+
+
+samples["units"] = samples.apply(
+    lambda row: ["r1", "r2"]
+    if is_paired_end(row.individual_id, row.sample_id, row.lane_id)
+    else "r1",
+    axis=1,
+)
 
 
 include: "rules/trim.smk"
