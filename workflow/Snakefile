@@ -37,7 +37,8 @@ validate(samples, "schemas/samples.schema.yaml")
 
 def is_paired_end(individual, sample, lane):
     ss = samples.loc[(individual, "illumina", sample, lane), :]
-    if ("r2" in ss.index) and (ss.r2):
+    # check that r2 is present and not NaN for this sample
+    if ("r2" in ss.index) and (ss.r2 == ss.r2):
         return True
     else:
         return False
