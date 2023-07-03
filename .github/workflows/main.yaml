@@ -100,7 +100,6 @@ jobs:
         run: |
           snakemake all \
           --use-conda \
-          --use-singularity \
           --directory .test \
           --configfile .test/config/config_${{ matrix.build }}.yaml \
           --cores 2 \
