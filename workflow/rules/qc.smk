@@ -1,11 +1,16 @@
 def get_fastqc_input(wildcards):
-    r1 = samples.loc[
-        (wildcards.individual, "illumina", wildcards.sample, wildcards.lane), "r1"
-    ]
-    r2 = samples.loc[
-        (wildcards.individual, "illumina", wildcards.sample, wildcards.lane), "r2"
-    ]
-    return r1 if wildcards.read == "r1" else r2
+    if is_paired_end(wildcards.individual, wildcards.sample, wildcards.lane):
+        r1 = samples.loc[
+            (wildcards.individual, "illumina", wildcards.sample, wildcards.lane), "r1"
+        ]
+        r2 = samples.loc[
+            (wildcards.individual, "illumina", wildcards.sample, wildcards.lane), "r2"
+        ]
+        return r1 if wildcards.read == "r1" else r2
+    else:
+        return samples.loc[
+            (wildcards.individual, "illumina", wildcards.sample, wildcards.lane), "r1"
+        ]
 
 
 rule fastqc:
@@ -27,15 +32,12 @@ rule fastqc:
 rule multiqc:
     input:
         expand(
-            expand(
-                rules.fastqc.output,
-                zip,
-                individual=samples.individual_id,
-                sample=samples.sample_id,
-                lane=samples.lane_id,
-                allow_missing=True,
-            ),
-            read=["r1", "r2"],
+            rules.fastqc.output,
+            zip,
+            individual=samples.individual_id,
+            sample=samples.sample_id,
+            lane=samples.lane_id,
+            read=samples.units,
             allow_missing=True,
         ),
     output:

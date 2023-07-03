@@ -14,13 +14,23 @@ rule bwa_mem2_index:
         "v1.25.0/bio/bwa-mem2/index"
 
 
+def get_bwa_input(wildcards):
+    # is paired end
+    if is_paired_end(wildcards.individual, wildcards.sample, wildcards.lane):
+        return [
+            "{outdir}/trimmed/illumina/{individual}/{sample}_L00{lane}.1.fq.gz",
+            "{outdir}/trimmed/illumina/{individual}/{sample}_L00{lane}.2.fq.gz",
+        ]
+    else:
+        return [
+            "{outdir}/trimmed/illumina/{individual}/{sample}_L00{lane}.fq.gz",
+        ]
+
+
 # map reads
 rule bwa_mem2_mem:
     input:
-        reads=[
-            "{outdir}/trimmed/illumina/{individual}/{sample}_L00{lane}.1.fq.gz",
-            "{outdir}/trimmed/illumina/{individual}/{sample}_L00{lane}.2.fq.gz",
-        ],
+        reads=get_bwa_input,
         idx=rules.bwa_mem2_index.output,
     output:
         "{outdir}/align/illumina/{individual}/{sample}_L00{lane}.bam",
