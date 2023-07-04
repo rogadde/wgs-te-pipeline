@@ -40,7 +40,6 @@ properties:
 
 required:
   - samples
-  - genome
   - outdir
-  - region
+  - genome
   - reptype
