@@ -35,19 +35,50 @@ rule fastqc:
         "v1.28.0/bio/fastqc"
 
 
-# get fastqc output for all samples
-fastqc_outputs = []
-for s in samples.itertuples():
-    for t in ["raw", "trimmed"]:
-        for u in s.units:
-            fastqc_outputs.append(
-                f"{{outdir}}/fastqc/{s.platform}/{s.individual_id}/{s.sample_id}/{s.lane_id}_{u}_{t}_fastqc.zip"
-            )
+rule samtools_flagstat:
+    input:
+        rules.sambamba_sort.output,
+    output:
+        rules.sambamba_sort.output[0] + ".flagstat",
+    log:
+        rules.sambamba_sort.output[0] + ".flagstat.log",
+    params:
+        extra="",  # optional params string
+    wrapper:
+        "v2.1.1/bio/samtools/flagstat"
 
 
 rule multiqc:
     input:
-        fastqc_outputs,
+        expand(
+            expand(
+                rules.fastqc.output,
+                zip,
+                individual=samples.individual_id,
+                sample=samples.sample_id,
+                lane=samples.lane_id,
+                allow_missing=True,
+            ),
+            read=["r1", "r2"],
+            allow_missing=True,
+        ),
+        expand(
+            rules.samtools_flagstat.output,
+            zip,
+            individual=samples.individual_id,
+            sample=samples.sample_id,
+            lane=samples.lane_id,
+            allow_missing=True,
+        ),
+        expand(
+            rules.trimmomatic_pe.output,
+            zip,
+            individual=samples.individual_id,
+            sample=samples.sample_id,
+            lane=samples.lane_id,
+            platform=samples.platform,
+            allow_missing=True,
+        ),
     output:
         "{outdir}/multiqc.html",
     params:
