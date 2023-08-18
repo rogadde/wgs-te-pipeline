@@ -33,7 +33,7 @@ rule bwa_mem2_mem:
         reads=get_bwa_input,
         idx=rules.bwa_mem2_index.output,
     output:
-        "{outdir}/align/illumina/{individual}/{sample}_L00{lane}.bam",
+        temp("{outdir}/align/illumina/{individual}/{sample}_L00{lane}.bam"),
     log:
         "{outdir}/align/illumina/{individual}/{sample}_L00{lane}.bwamem2.log",
     params:
@@ -63,7 +63,7 @@ rule samtools_cat:
     input:
         get_lanes,
     output:
-        "{outdir}/align/illumina/{individual}/{sample}.bam",
+        temp("{outdir}/align/illumina/{individual}/{sample}.bam"),
     log:
         "{outdir}/align/illumina/{individual}/{sample}_cat.log",
     wildcard_constraints:
@@ -88,7 +88,7 @@ rule samblaster_markdup:
     input:
         get_markdup_input,
     output:
-        "{outdir}/align/illumina/{individual}/{sample}.markdup.bam",
+        temp("{outdir}/align/illumina/{individual}/{sample}.markdup.bam"),
     log:
         "{outdir}/align/illumina/{individual}/{sample}_markdup.log",
     conda:
