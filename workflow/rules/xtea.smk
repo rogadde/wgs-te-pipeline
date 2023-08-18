@@ -87,6 +87,8 @@ rule prepare_xtea:
             allow_missing=True,
         ),
     threads: 8
+    shadow:
+        "shallow"
     log:
         "{outdir}/xtea/{platform}/{individual}/prepare_xtea.log",
     conda:
