@@ -101,7 +101,7 @@ jobs:
           snakemake all \
           --use-conda \
           --directory .test \
-          --configfile .test/config/config_${{ matrix.build }}.yaml \
+          --configfile .test/config/${{ matrix.build }}.yaml \
           --cores 2 \
           --show-failed-logs \
           --conda-cleanup-pkgs cache \
