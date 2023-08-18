@@ -36,11 +36,11 @@ validate(samples, "schemas/samples.schema.yaml")
 
 
 include: "rules/trim.smk"
-include: "rules/qc.smk"
 include: "rules/ref.smk"
 include: "rules/longranger.smk"
 include: "rules/bwa.smk"
 include: "rules/xtea.smk"
+include: "rules/qc.smk"
 
 
 # determine if each individual has multiple platforms
