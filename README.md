@@ -17,11 +17,14 @@ snakemake wgs --cores 2 --use-conda --show-failed-logs
 
 # run the test
 cd ../..
-snakemake all --directory .test --cores 2 --use-conda --show-failed-logs
+snakemake all --directory .test --cores 2 --use-conda --show-failed-logs --configfile .test/config/hg38.yaml
 ```
+
+## Limitations
+
+1. xTea cannot call TE insertions from single-end reads, but you can use this pipeline to qc and map these reads
 
 ## TODO:
 
 - [ ] add option for somatic TE calling
-- [ ] add CHM13v2 compatibility
-- [ ] add adapter/quality trimming?
+- [ ] simplify samplesheet index
