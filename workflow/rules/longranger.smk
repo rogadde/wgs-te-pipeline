@@ -16,20 +16,21 @@ rule longranger_mkref:
         longranger=rules.install_longranger.output,
         fa=rules.get_genome.output.fa,
     output:
-        directory(f"resources/refdata-hs38d1{region_name}/"),
+        directory(f"resources/refdata-{genome_name}/"),
     shell:
         """
         {input.longranger}/longranger mkref {input.fa}
-        mv refdata-hs38d1* resources/
+        mv refdata-* resources/
         """
 
 
 rule longranger_align:
     input:
         longranger=rules.install_longranger.output,
-        fastqs=lambda wc: samples.loc[
-            (wc.individual, "10x", wc.sample), ["r1", "r2"]
-        ].values.flatten(),
+        fastqs=[
+            "{outdir}/trimmed/10x/{individual}/{sample}_L00{lane}.1.fq.gz",
+            "{outdir}/trimmed/10x/{individual}/{sample}_L00{lane}.2.fq.gz",
+        ],
         ref=rules.longranger_mkref.output,
     output:
         bam="{outdir}/align/10x/{individual}/{sample}/outs/possorted_bam.bam",
