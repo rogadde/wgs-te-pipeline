@@ -57,9 +57,11 @@ rule multiqc:
                 individual=samples.individual_id,
                 sample=samples.sample_id,
                 lane=samples.lane_id,
+                platform=samples.platform,
                 allow_missing=True,
             ),
             read=["r1", "r2"],
+            trimmed=["raw", "trimmed"],
             allow_missing=True,
         ),
         expand(
