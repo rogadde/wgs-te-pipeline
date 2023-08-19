@@ -74,9 +74,8 @@ jobs:
         id: test-cache
         uses: actions/cache@v3
         with:
-          path: |
-            .test/ngs-test-data
-          key: test-data
+          path: .test/ngs-test-data/wgs
+          key: ${{ hashFiles('.test/ngs-test-data/rules/wgs.smk') }}
       - name: Cache job resources
         id: cache-sm
         uses: actions/cache@v3
