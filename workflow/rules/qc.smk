@@ -1,22 +1,23 @@
+def get_fastq(wildcards, read: str):
+    return samples.loc[
+        (wildcards.individual, wildcards.platform, wildcards.sample, wildcards.lane),
+        read,
+    ]
+
+
 def get_fastqc_input(wildcards):
-    if is_paired_end(wildcards):
-        if wildcards.trimmed == "raw":
-            return (
-                get_fastq(wildcards, "r2")
-                if wildcards.read == "r1"
-                else get_fastq(wildcards, "r2")
-            )
-        elif wildcards.trimmed == "trimmed":
-            return (
-                rules.trimmomatic_pe.output.r1
-                if wildcards.read == "r1"
-                else rules.trimmomatic_pe.output.r2
-            )
-    else:
-        if wildcards.trimmed == "raw":
-            return get_fastq(wildcards, "r1")
-        elif wildcards.trimmed == "trimmed":
-            return rules.trimmomatic_se.output.r1
+    if wildcards.trimmed == "raw":
+        return (
+            get_fastq(wildcards, "r2")
+            if wildcards.read == "r1"
+            else get_fastq(wildcards, "r2")
+        )
+    elif wildcards.trimmed == "trimmed":
+        return (
+            rules.trimmomatic_pe.output.r1
+            if wildcards.read == "r1"
+            else rules.trimmomatic_pe.output.r2
+        )
 
 
 rule fastqc:
