@@ -26,20 +26,20 @@ properties:
       - region
       - fasta
 
-  retype:
-    type:
-      - array
-      - string
+  xtea_reptypes:
+    type: array
+    items:
+      type: string
+      enum:
+        - L1
+        - Alu
+        - SVA
+        - HERV
+        - Mitochondrial
     description: repeat type(s) to call
-    enum:
-      - L1
-      - Alu
-      - SVA
-      - HERV
-      - Mitochondrial
 
 required:
   - samples
   - outdir
   - genome
-  - reptype
+  - xtea_reptypes

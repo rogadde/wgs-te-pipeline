@@ -25,11 +25,11 @@ def get_reptype(rep: str):
 
 
 # make reptype argument for xTea
-if type(snakemake.config["reptype"]) is str:
-    reptype = get_reptype(snakemake.config["reptype"])
+if type(snakemake.config["xtea_reptypes"]) is str:
+    reptype = get_reptype(snakemake.config["xtea_reptypes"])
 else:
     reptype = 0
-    for rep in snakemake.config["reptype"]:
+    for rep in snakemake.config["xtea_reptypes"]:
         reptype += get_reptype(rep)
 
 # make full path
@@ -80,6 +80,6 @@ shell(
 )
 
 
-os.remove("submit_calling_jobs_for_samples.sh")
+# os.remove("submit_calling_jobs_for_samples.sh")
 
 sys.stderr.close()

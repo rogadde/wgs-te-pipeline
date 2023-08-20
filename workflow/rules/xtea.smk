@@ -83,7 +83,7 @@ rule prepare_xtea:
     output:
         script=expand(
             "{outdir}/xtea/{platform}/{individual}/{reptype}/run_xTEA_pipeline.sh",
-            reptype=config["reptype"],
+            reptype=config["xtea_reptypes"],
             allow_missing=True,
         ),
     threads: 8
