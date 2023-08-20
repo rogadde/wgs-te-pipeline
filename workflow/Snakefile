@@ -40,6 +40,7 @@ include: "rules/ref.smk"
 include: "rules/longranger.smk"
 include: "rules/bwa.smk"
 include: "rules/xtea.smk"
+include: "rules/megane.smk"
 include: "rules/qc.smk"
 
 
@@ -52,22 +53,38 @@ for i in set(samples["individual_id"]):
     else:
         platforms[i] = samples.loc[i, "platform"].iloc[0]
 
+final_output = {}
+
+if "38" in config["genome"]["name"]:
+    final_output["megane"] = expand(
+        expand(
+            rules.megane.output,
+            zip,
+            individual=platforms.keys(),
+            sample=samples.sample_id.unique(),
+            allow_missing=True,
+        ),
+        outdir=config["outdir"],
+    )
+
+final_output["xtea"] = expand(
+    expand(
+        rules.run_xtea.output,
+        reptype=config["xtea_reptypes"],
+        outdir=config["outdir"],
+        allow_missing=True,
+    ),
+    zip,
+    individual=platforms.keys(),
+    platform=platforms.values(),
+)
+
+final_output["qc"] = expand(
+    rules.multiqc.output,
+    outdir=config["outdir"],
+)
+
 
 rule all:
     input:
-        expand(
-            rules.multiqc.output,
-            outdir=config["outdir"],
-        ),
-        expand(
-            expand(
-                rules.run_xtea.output,
-                reptype=config["reptype"],
-                outdir=config["outdir"],
-                allow_missing=True,
-            ),
-            zip,
-            individual=platforms.keys(),
-            platform=platforms.values(),
-            allow_missing=True,
-        ),
+        **final_output,
